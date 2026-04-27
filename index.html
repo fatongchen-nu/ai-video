@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fatong Chen — AI Video Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #f5f0e8;
+    --ink: #1a1612;
+    --warm-mid: #8b7355;
+    --accent: #c9622f;
+    --pale: #ede8de;
+    --muted: #9e9488;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  header {
+    padding: 80px 8vw 60px;
+    border-bottom: 1px solid var(--warm-mid);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .header-left h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.4rem, 5vw, 4rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  .header-left h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .header-left p {
+    margin-top: 16px;
+    font-size: 0.95rem;
+    color: var(--warm-mid);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-family: 'DM Mono', monospace;
+    font-weight: 300;
+  }
+
+  .header-right {
+    text-align: right;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 2;
+  }
+
+  /* ── INTRO ── */
+  .intro {
+    padding: 70px 8vw;
+    max-width: 780px;
+  }
+
+  .intro p {
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: var(--ink);
+  }
+
+  .intro p + p { margin-top: 20px; }
+
+  .tag-row {
+    margin-top: 32px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border: 1px solid var(--warm-mid);
+    color: var(--warm-mid);
+    border-radius: 2px;
+  }
+
+  /* ── SECTION TITLE ── */
+  .section-label {
+    padding: 0 8vw;
+    margin-bottom: 48px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .section-label span {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--pale);
+  }
+
+  /* ── PIPELINE ── */
+  .pipeline-section {
+    padding: 70px 8vw;
+    border-top: 1px solid var(--pale);
+  }
+
+  .pipeline-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 400;
+    margin-bottom: 48px;
+  }
+
+  .pipeline {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0;
+    border: 1px solid var(--warm-mid);
+  }
+
+  .step {
+    padding: 32px 28px;
+    border-right: 1px solid var(--pale);
+    position: relative;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .step.visible { opacity: 1; transform: translateY(0); }
+  .step:last-child { border-right: none; }
+
+  .step-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+  }
+
+  .step-tool {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .step-desc {
+    font-size: 0.82rem;
+    color: var(--warm-mid);
+    line-height: 1.6;
+  }
+
+  .arrow {
+    display: none;
+  }
+
+  /* ── PROMPT SECTION ── */
+  .prompt-section {
+    padding: 70px 8vw;
+    border-top: 1px solid var(--pale);
+  }
+
+  .prompt-section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 400;
+    margin-bottom: 48px;
+  }
+
+  .prompt-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  @media (max-width: 780px) {
+    .prompt-cards { grid-template-columns: 1fr; }
+  }
+
+  .prompt-card {
+    background: var(--pale);
+    padding: 32px;
+    border-left: 3px solid var(--accent);
+    opacity: 0;
+    transform: translateX(-16px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .prompt-card.visible { opacity: 1; transform: translateX(0); }
+
+  .prompt-card-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  .prompt-card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .prompt-card p {
+    font-size: 0.83rem;
+    line-height: 1.7;
+    color: var(--warm-mid);
+  }
+
+  .prompt-toggle {
+    margin-top: 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    cursor: pointer;
+    border: none;
+    background: none;
+    padding: 0;
+  }
+
+  .prompt-toggle:hover { text-decoration: underline; }
+
+  .prompt-full {
+    display: none;
+    margin-top: 16px;
+    font-size: 0.78rem;
+    font-family: 'DM Mono', monospace;
+    color: var(--ink);
+    line-height: 1.8;
+    background: white;
+    padding: 20px;
+    border: 1px solid var(--pale);
+    white-space: pre-wrap;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .prompt-full.open { display: block; }
+
+  /* ── KEY TECHNIQUES ── */
+  .techniques-section {
+    padding: 70px 8vw;
+    border-top: 1px solid var(--pale);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+  }
+
+  @media (max-width: 700px) {
+    .techniques-section { grid-template-columns: 1fr; gap: 40px; }
+  }
+
+  .techniques-section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 400;
+    margin-bottom: 32px;
+    grid-column: 1 / -1;
+  }
+
+  .technique-block h3 {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+
+  .technique-block ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .technique-block li {
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: var(--warm-mid);
+    padding-left: 16px;
+    position: relative;
+    margin-bottom: 8px;
+  }
+
+  .technique-block li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+  }
+
+  /* ── SKILLS MAPPING ── */
+  .skills-section {
+    padding: 70px 8vw;
+    border-top: 1px solid var(--pale);
+    background: var(--ink);
+    color: var(--cream);
+  }
+
+  .skills-section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 400;
+    margin-bottom: 12px;
+  }
+
+  .skills-section .subtitle {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 48px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 32px;
+  }
+
+  .skill-item {
+    border-top: 1px solid #3a3530;
+    padding-top: 20px;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .skill-item.visible { opacity: 1; transform: translateY(0); }
+
+  .skill-item .label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+
+  .skill-item p {
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: #c4b9a8;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 48px 8vw;
+    border-top: 1px solid var(--pale);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  footer p {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  footer a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  footer a:hover { text-decoration: underline; }
+
+  /* ── SCROLL ANIMATION ── */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <h1>AI Video<br><em>Portfolio</em></h1>
+    <p>Fatong Chen &nbsp;·&nbsp; Generative Media Experiments</p>
+  </div>
+  <div class="header-right">
+    <div>GPT-5.3 &nbsp;/&nbsp; NanoBanana</div>
+    <div>Google Flow VEO3</div>
+    <div>Text → Image → Video</div>
+  </div>
+</header>
+
+<div class="intro fade-in">
+  <p>
+    This portfolio documents an end-to-end AI video generation pipeline built around a single subject:
+    my black-and-white long-haired cat. Each video begins as a real photo, passes through a multi-stage
+    generative workflow spanning image synthesis, detail refinement, and cinematic video generation,
+    and ends in a hand-edited short-form clip.
+  </p>
+  <p>
+    The goal isn't automation for its own sake — it's using structured prompt engineering to control
+    model behavior across modalities, maintain visual consistency across frames, and produce outputs
+    that feel grounded and believable despite being entirely synthetic.
+  </p>
+  <div class="tag-row">
+    <span class="tag">Text → Image → Video</span>
+    <span class="tag">Prompt Engineering</span>
+    <span class="tag">Visual Consistency</span>
+    <span class="tag">AIGC</span>
+    <span class="tag">Post-production</span>
+  </div>
+</div>
+
+<!-- PIPELINE -->
+<div class="pipeline-section">
+  <div class="section-label"><span>Workflow</span></div>
+  <h2 class="pipeline-title fade-in">The Production Pipeline</h2>
+  <div class="pipeline">
+    <div class="step">
+      <div class="step-num">01 &nbsp;/&nbsp; INPUT</div>
+      <div class="step-tool">Real Photo</div>
+      <div class="step-desc">Source image of the cat in a natural scene — the ground truth for all downstream generation</div>
+    </div>
+    <div class="step">
+      <div class="step-num">02 &nbsp;/&nbsp; PROMPT</div>
+      <div class="step-tool">GPT-5.3</div>
+      <div class="step-desc">Generates a photorealistic image prompt preserving scene elements while scripting new action and pose</div>
+    </div>
+    <div class="step">
+      <div class="step-num">03 &nbsp;/&nbsp; IMAGE</div>
+      <div class="step-tool">NanoBanana</div>
+      <div class="step-desc">Synthesizes the keyframe image; manual detail refinement to fix anatomy and lighting inconsistencies</div>
+    </div>
+    <div class="step">
+      <div class="step-num">04 &nbsp;/&nbsp; VIDEO PROMPT</div>
+      <div class="step-tool">GPT-5.3</div>
+      <div class="step-desc">Translates the static image into a structured cinematic video prompt with motion, camera, and negative constraints</div>
+    </div>
+    <div class="step">
+      <div class="step-num">05 &nbsp;/&nbsp; VIDEO</div>
+      <div class="step-tool">VEO3 Fast</div>
+      <div class="step-desc">Google Flow renders the scene as a short photorealistic video clip from the image reference</div>
+    </div>
+    <div class="step">
+      <div class="step-num">06 &nbsp;/&nbsp; EDIT</div>
+      <div class="step-tool">Post-production</div>
+      <div class="step-desc">Manual editing, clip selection, pacing, and assembly into final short-form content</div>
+    </div>
+  </div>
+</div>
+
+<!-- PROMPT EXAMPLES -->
+<div class="prompt-section">
+  <div class="section-label"><span>Prompts</span></div>
+  <h2 class="fade-in">Prompt Engineering Examples</h2>
+  <div class="prompt-cards">
+
+    <div class="prompt-card">
+      <div class="prompt-card-label">Stage 2 &nbsp;·&nbsp; Image Prompt</div>
+      <div class="prompt-card-title">Morning Stretch Scene</div>
+      <p>Preserves the full bedroom environment while scripting a specific waking pose — chest open, paws raised, mouth wide in mid-yawn. Every prop is anchored to prevent model drift.</p>
+      <button class="prompt-toggle" onclick="this.nextElementSibling.classList.toggle('open'); this.textContent = this.nextElementSibling.classList.contains('open') ? '↑ Hide prompt' : '↓ View full prompt'">↓ View full prompt</button>
+      <div class="prompt-full">Generate a photorealistic image based on the original black-and-white cat in bed photo. Keep the same bedroom scene, bed, beige pillow, dark brown blanket, bedside table, cat-shaped alarm clock, window, curtains, and soft morning light unchanged. The black-and-white long-haired cat has just woken up and sits up from under the blanket, with only the upper body rising while the lower body remains naturally covered. The cat is doing a big, satisfying morning stretch: both front paws raised high and stretched wide, chest open, neck extended, mouth wide open as if yawning while stretching. Cute, sleepy, lively, cozy, realistic, like a real captured wake-up moment.</div>
+    </div>
+
+    <div class="prompt-card">
+      <div class="prompt-card-label">Stage 4 &nbsp;·&nbsp; Video Prompt</div>
+      <div class="prompt-card-title">Stranded Island — Fire Starting</div>
+      <p>A cinematic survival scene where a banana cat attempts friction-fire by spinning at absurd speed on a branch pile. The prompt enforces exact motion physics, negative constraints, and documentary-style camera rules.</p>
+      <button class="prompt-toggle" onclick="this.nextElementSibling.classList.toggle('open'); this.textContent = this.nextElementSibling.classList.contains('open') ? '↑ Hide prompt' : '↓ View full prompt'">↓ View full prompt</button>
+      <div class="prompt-full">Use the provided image as the exact reference for the banana cat, the cow cat, the cave, the forest environment, the branch pile, the lighting, and the overall stranded-island atmosphere.
+
+Create a highly realistic cinematic video that begins as a natural continuation of this exact scene. The same banana cat and the same black-and-white long-haired cow cat are in front of the cave, with the small pile of branches arranged on the ground between them.
+
+Action: At the beginning, both cats remain in the same position as in the reference image. The cow cat then gently pulls off a very small loose tuft of white fur from its fluffy chest and drops it into the center of the branch pile, as if adding tinder. After that, the banana cat steps onto the branch pile and begins spinning rapidly in place like a tiny top, using absurd speed as an improvised friction-fire attempt. The spinning should be extremely fast, creating a yellow circular motion blur from the banana suit while the body remains centered on the branch pile. The branch pile shakes and compresses slightly under the spinning. After a brief moment, a tiny ignition point appears in the dry sticks, then small realistic flames begin to spread through the pile. As soon as the fire starts, the banana cat quickly stops spinning and hops away from the fire, while the cow cat watches. The fire remains as a small believable campfire in front of the cave.
+
+Motion details:
+· The cow cat's motion is small, subtle, and gentle
+· Only a tiny loose tuft of white fur is removed
+· The tuft falls directly into the branch pile
+· The banana cat spins in place like a top, not running around
+· The spinning is extremely fast and creates a strong yellow motion blur
+· The banana cat should remain readable as the same banana cat, not turn into an abstract blur
+· The branch pile should visibly rustle, wobble, and compress before igniting
+· The ignition must start small and believable
+· The banana cat immediately moves off once flames appear
+
+Camera: Same general framing as reference image. Realistic documentary-style. Stable or very subtle natural handheld drift. No cuts. No dramatic zoom.
+
+Negative constraints: no extra animals, no humans, no human hands, no tools, no matches, no lighter, no explosion, no huge fireball, no magical fire, no cartoon flames, no body deformation, no duplicate cats, no scene transition, no fantasy elements.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TECHNIQUES -->
+<div class="techniques-section">
+  <div class="section-label" style="grid-column:1/-1"><span>Craft</span></div>
+  <h2>Key Prompt Engineering Techniques</h2>
+
+  <div class="technique-block fade-in">
+    <h3>Visual Anchoring</h3>
+    <ul>
+      <li>Enumerate every scene element explicitly to prevent model hallucination</li>
+      <li>Reference the input image as ground truth for character identity</li>
+      <li>Lock unchanged props (blanket color, alarm clock, curtains) while only scripting new action</li>
+    </ul>
+  </div>
+
+  <div class="technique-block fade-in">
+    <h3>Motion Specification</h3>
+    <ul>
+      <li>Describe physics at the micro level — "spins in place like a top, not running around"</li>
+      <li>Specify blur characteristics ("strong yellow circular motion blur") without over-abstracting</li>
+      <li>Sequence actions with explicit temporal ordering (first → then → after → as soon as)</li>
+    </ul>
+  </div>
+
+  <div class="technique-block fade-in">
+    <h3>Negative Constraints</h3>
+    <ul>
+      <li>Explicitly rule out common model failure modes (duplicate characters, scene transitions)</li>
+      <li>Anticipate and pre-block fantasy drift ("no magical fire", "no cartoon flames")</li>
+      <li>Constrain camera behavior to prevent unwanted cuts or zoom</li>
+    </ul>
+  </div>
+
+  <div class="technique-block fade-in">
+    <h3>Tone & Style Control</h3>
+    <ul>
+      <li>Set tonal contradiction deliberately — "absurd but believable survival tone"</li>
+      <li>Use documentary framing language to ground physically impossible scenes</li>
+      <li>Calibrate emotion descriptors at the scene level, not just the character level</li>
+    </ul>
+  </div>
+</div>
+
+<!-- SKILLS MAPPING -->
+<div class="skills-section">
+  <div class="section-label" style="border-color: #3a3530;"><span style="color:#6b6357">Relevance</span></div>
+  <h2>Why This Maps to AI Product Work</h2>
+  <p class="subtitle">Connecting the creative process to product and AIGC competencies</p>
+  <div class="skills-grid">
+    <div class="skill-item">
+      <div class="label">Model Behavior</div>
+      <p>Designing prompts that reliably control model outputs across text, image, and video modalities — directly analogous to owning model performance metrics in production.</p>
+    </div>
+    <div class="skill-item">
+      <div class="label">Multi-modal Pipeline</div>
+      <p>End-to-end ownership of a text → image → video workflow, including identifying and fixing failure modes at each stage through prompt iteration.</p>
+    </div>
+    <div class="skill-item">
+      <div class="label">AIGC Commercialization</div>
+      <p>Hands-on experience with the same generation stack (image synthesis, video generation, post-production) used in short-form advertising creative tools.</p>
+    </div>
+    <div class="skill-item">
+      <div class="label">Iteration & Evaluation</div>
+      <p>Each video requires multiple prompt revisions, qualitative evaluation against a defined target, and structured debugging — a micro version of product iteration cycles.</p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>Fatong Chen &nbsp;·&nbsp; fatongc03@gmail.com</p>
+  <p>Built with GPT-5.3 &nbsp;·&nbsp; NanoBanana &nbsp;·&nbsp; Google Flow VEO3</p>
+</footer>
+
+<script>
+  // Intersection Observer for scroll animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => {
+          entry.target.classList.add('visible');
+        }, entry.target.dataset.delay || 0);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-in, .step, .prompt-card, .skill-item').forEach((el, i) => {
+    el.dataset.delay = (i % 4) * 80;
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
